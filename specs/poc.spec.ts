@@ -35,4 +35,24 @@ describe('POC Tests', () => {
     })
   });
 
+  describe('PUT Request', () => {
+    it('PUT /posts/{id}', async () => {
+      const data = {
+        title: 'Updated title',
+        body: 'Updated body..',
+        userId: 5,
+      }
+
+      const getRes = await request.get('/posts/1');
+      const beforeTitle = getRes.body.title;
+
+      const res = await request
+        .put('/posts/1')
+        .send(data)
+      expect(res.body.title).not.toBe(beforeTitle); // null
+      expect(res.body.title).toBe(data.title);
+
+      // GET call and verify the title is expected
+    });
+  });
 })
