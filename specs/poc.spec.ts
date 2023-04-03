@@ -72,4 +72,12 @@ describe('POC Tests', () => {
       expect(res.body.title).toBe(data.title);
     });
   });
+
+  describe('DELETE requests', () => {
+    it('DELETE /posts/{id}', async () => {
+      const res = await request.delete('/posts/1');
+      expect(res.statusCode).toBe(200)
+      expect(res.body).toEqual({})
+    })
+  });
 })
