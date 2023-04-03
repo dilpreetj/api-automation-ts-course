@@ -55,4 +55,21 @@ describe('POC Tests', () => {
       // GET call and verify the title is expected
     });
   });
+
+  describe('PATCH Request', () => {
+    it('PATCH /posts/{id}', async () => {
+      const data = {
+        title: 'Updated title'
+      }
+
+      const getRes = await request.get('/posts/1');
+      const beforeTitle = getRes.body.title;
+
+      const res = await request
+        .patch('/posts/1')
+        .send(data)
+      expect(res.body.title).not.toBe(beforeTitle); // null
+      expect(res.body.title).toBe(data.title);
+    });
+  });
 })
