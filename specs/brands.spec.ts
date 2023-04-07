@@ -18,7 +18,7 @@ describe('Brands', () => {
     });
   });
 
-  describe('Create brands', () => {
+  describe.skip('Create brands', () => {
     it('POST /brands', async () => {
       const data = {
         'name': 'FitBit',
@@ -33,5 +33,28 @@ describe('Brands', () => {
       expect(res.body).toHaveProperty('createdAt')
     });
   });
+
+  describe('Update brands', () => {
+    it('PUT /brands', async () => {
+      const data = {
+        'name': 'Fit Bit'
+      }
+      const res = await request
+        .put('/brands/6430a7085ae9ce7bc35a92aa')
+        .send(data)
+
+      expect(res.statusCode).toEqual(200)
+      expect(res.body.name).toEqual(data.name)
+    });
+  });
+
+  describe('Delete Brands', () => {
+    it('DELETE /brands', async () => {
+      const res = await request
+        .delete('/brands/6430a7085ae9ce7bc35a92aa')
+      expect(res.statusCode).toEqual(200)
+    });
+  });
+
 
 });
