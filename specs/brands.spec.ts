@@ -2,6 +2,7 @@ import * as supertest from 'supertest';
 const request = supertest('https://sdetunicorns.com/api/test')
 
 describe('Brands', () => {
+  let newBrand;
 
   describe('Fetch brands', () => {
     it('GET /brands', async () => {
@@ -13,7 +14,6 @@ describe('Brands', () => {
   });
 
   describe('Create & Fetch brands', () => {
-    let newBrand;
     it('POST /brands', async () => {
       const data = {
         'name': 'Test Brand ' + Math.floor(Math.random() * 100000),
@@ -40,10 +40,10 @@ describe('Brands', () => {
   describe('Update brands', () => {
     it('PUT /brands', async () => {
       const data = {
-        'name': 'Fit Bit'
+        'name': newBrand.name + ' updated'
       }
       const res = await request
-        .put('/brands/6430a7085ae9ce7bc35a92aa')
+        .put('/brands/' + newBrand._id)
         .send(data)
 
       expect(res.statusCode).toEqual(200)
@@ -54,7 +54,7 @@ describe('Brands', () => {
   describe('Delete Brands', () => {
     it('DELETE /brands', async () => {
       const res = await request
-        .delete('/brands/6430a7085ae9ce7bc35a92aa')
+        .delete('/brands/' + newBrand._id)
       expect(res.statusCode).toEqual(200)
     });
   });
