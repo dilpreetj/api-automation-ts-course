@@ -18,11 +18,11 @@ describe('Brands', () => {
     });
   });
 
-  describe.skip('Create brands', () => {
+  describe('Create brands', () => {
     it('POST /brands', async () => {
       const data = {
-        'name': 'FitBit',
-        'description': 'FitBit Watches'
+        'name': 'Test Brand ' + Math.floor(Math.random() * 100000),
+        'description': 'Test Brand Description'
       }
       const res = await request
         .post('/brands')
@@ -55,6 +55,4 @@ describe('Brands', () => {
       expect(res.statusCode).toEqual(200)
     });
   });
-
-
 });
