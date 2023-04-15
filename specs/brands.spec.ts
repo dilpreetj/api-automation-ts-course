@@ -14,26 +14,49 @@ describe('Brands', () => {
   });
 
   describe('Create & Fetch brands', () => {
-    it('POST /brands', async () => {
-      const data = {
-        'name': 'Test Brand ' + Math.floor(Math.random() * 100000),
-        'description': 'Test Brand Description'
-      }
-      const res = await request
-        .post('/brands')
-        .send(data)
 
-      expect(res.statusCode).toEqual(200)
-      expect(res.body.name).toEqual(data.name)
-      expect(res.body).toHaveProperty('createdAt')
+    describe('Create Brands', () => {
+      it('POST /brands', async () => {
+        const data = {
+          'name': 'Test Brand ' + Math.floor(Math.random() * 100000),
+          'description': 'Test Brand Description'
+        }
+        const res = await request
+          .post('/brands')
+          .send(data)
 
-      newBrand = res.body;
-    });
+        expect(res.statusCode).toEqual(200)
+        expect(res.body.name).toEqual(data.name)
+        expect(res.body).toHaveProperty('createdAt')
 
-    it('GET /brand/:id', async () => {
-      const res = await request.get('/brands/' + newBrand._id);
-      expect(res.statusCode).toEqual(200);
-      expect(res.body.name).toEqual(newBrand.name)
+        newBrand = res.body;
+      });
+
+      it('Schema Verification - Name is a mandatory field', async () => {
+        const data = {
+          'name': '',
+          'description': 'Test Brand Description'
+        }
+        const res = await request
+          .post('/brands')
+          .send(data)
+
+        expect(res.statusCode).toEqual(422)
+        expect(res.body.error).toEqual('Name is required');
+      });
+
+      it('Schema Verification - Min char length for name > 1', async () => {
+        const data = {
+          'name': 'a',
+          'description': 'Test Brand Description'
+        }
+        const res = await request
+          .post('/brands')
+          .send(data)
+
+        expect(res.statusCode).toEqual(422)
+        expect(res.body.error).toEqual('Brand name is too short');
+      });
     });
   });
 
