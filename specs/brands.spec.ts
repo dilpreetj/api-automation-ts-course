@@ -58,6 +58,33 @@ describe('Brands', () => {
         expect(res.body.error).toEqual('Brand name is too short');
       });
 
+      it('Schema Verification - Max char length for name = 30', async () => {
+        const data = {
+          'name': 'This is a really long brand name '
+        }
+
+        const res = await request
+        .post('/brands')
+        .send(data)
+
+        expect(res.statusCode).toEqual(422)
+        expect(res.body.error).toEqual('Brand name is too long');
+      });
+
+
+      it('Schema Verification - Description must be a string', async () => {
+        const data = {
+          'name': 'Sample Brand',
+          'description': 123
+        }
+
+        const res = await request
+          .post('/brands')
+          .send(data)
+
+        expect(res.statusCode).toEqual(422)
+        expect(res.body.error).toEqual('Brand description must be a string');
+      });
       it('Business Logic - Duplicate brand entries not allowed', async () => {
         const name = 'Test Brand ' + Math.floor(Math.random() * 100000)
         const data = {
@@ -106,6 +133,17 @@ describe('Brands', () => {
       expect(res.statusCode).toEqual(200)
       expect(res.body.name).toEqual(data.name)
     });
+    it('PUT /brands/invalid_id', async () => {
+      const data = {
+        'name': ' updated'
+      }
+      const res = await request
+        .put('/brands/' + 123)
+        .send(data)
+
+      expect(res.statusCode).toEqual(422)
+      expect(res.body.error).toContain('Unable to update brands')
+    });
   });
 
   describe('Delete Brands', () => {
@@ -113,6 +151,13 @@ describe('Brands', () => {
       const res = await request
         .delete('/brands/' + newBrand._id)
       expect(res.statusCode).toEqual(200)
+    });
+    it('DELETE /brands/invalid_id', async () => {
+      const res = await request
+        .delete('/brands/' + 123)
+      expect(res.statusCode).toEqual(422)
+      expect(res.body.error).toContain('Unable to delete brand')
+
     });
   });
 });
