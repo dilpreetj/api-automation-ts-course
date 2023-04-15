@@ -57,6 +57,40 @@ describe('Brands', () => {
         expect(res.statusCode).toEqual(422)
         expect(res.body.error).toEqual('Brand name is too short');
       });
+
+      it('Business Logic - Duplicate brand entries not allowed', async () => {
+        const name = 'Test Brand ' + Math.floor(Math.random() * 100000)
+        const data = {
+          'name': name
+        }
+        // first request
+        await request
+          .post('/brands')
+          .send(data)
+
+        // second request
+        const res2 = await request
+          .post('/brands')
+          .send(data)
+
+        expect(res2.statusCode).toEqual(422)
+        expect(res2.body.error).toContain('already exists')
+      });
+    });
+
+    describe('GET /brand/:id', () => {
+      it('Business Logic - GET /brand/invalid_id should throw 404', async () => {
+        const res = await request.get('/brands/' + '12348f0500b2931578c0a5ac');
+
+        expect(res.statusCode).toEqual(404);
+        expect(res.body.error).toContain('Brand not found.')
+      });
+
+      it('GET /brand/:id', async () => {
+        const res = await request.get('/brands/' + newBrand._id);
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.name).toEqual(newBrand.name)
+      });
     });
   });
 
