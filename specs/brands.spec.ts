@@ -13,99 +13,110 @@ describe('Brands', () => {
     });
   });
 
-  describe('Create & Fetch brands', () => {
+  describe('Create brands', () => {
 
-    describe('Create Brands', () => {
-      it('POST /brands', async () => {
+    it('POST /brands', async () => {
+      const data = {
+        'name': 'Test Brand ' + Math.floor(Math.random() * 100000),
+        'description': 'Test Brand Description'
+      }
+      const res = await request
+        .post('/brands')
+        .send(data)
+
+      expect(res.statusCode).toEqual(200)
+      expect(res.body.name).toEqual(data.name)
+      expect(res.body).toHaveProperty('createdAt')
+
+      newBrand = res.body;
+    });
+
+    it('Schema Verification - Name is a mandatory field', async () => {
+      const data = {
+        'name': '',
+        'description': 'Test Brand Description'
+      }
+      const res = await request
+        .post('/brands')
+        .send(data)
+
+      expect(res.statusCode).toEqual(422)
+      expect(res.body.error).toEqual('Name is required');
+    });
+
+    it('Schema Verification - Min char length for name > 1', async () => {
+      const data = {
+        'name': 'a',
+        'description': 'Test Brand Description'
+      }
+      const res = await request
+        .post('/brands')
+        .send(data)
+
+      expect(res.statusCode).toEqual(422)
+      expect(res.body.error).toEqual('Brand name is too short');
+    });
+
+    it('Schema Verification - Max char length for name = 30', async () => {
+      const data = {
+        'name': 'This is a really long brand name '
+      }
+
+      const res = await request
+        .post('/brands')
+        .send(data)
+
+      expect(res.statusCode).toEqual(422)
+      expect(res.body.error).toEqual('Brand name is too long');
+    });
+
+
+    it('Schema Verification - Description must be a string', async () => {
+      const data = {
+        'name': 'Sample Brand',
+        'description': 123
+      }
+
+      const res = await request
+        .post('/brands')
+        .send(data)
+
+      expect(res.statusCode).toEqual(422)
+      expect(res.body.error).toEqual('Brand description must be a string');
+    });
+    it('Business Logic - Duplicate brand entries not allowed', async () => {
+      const name = 'Test Brand ' + Math.floor(Math.random() * 100000)
+      const data = {
+        'name': name
+      }
+      // first request
+      await request
+        .post('/brands')
+        .send(data)
+
+      // second request
+      const res2 = await request
+        .post('/brands')
+        .send(data)
+
+      expect(res2.statusCode).toEqual(422)
+      expect(res2.body.error).toContain('already exists')
+    });
+  });
+
+  describe('Fetch Individual Brand', () => {
+    describe('GET /brand/:id', () => {
+      let postBrand;
+      beforeAll(async () => {
         const data = {
           'name': 'Test Brand ' + Math.floor(Math.random() * 100000),
           'description': 'Test Brand Description'
         }
-        const res = await request
+        postBrand = await request
           .post('/brands')
           .send(data)
+      })
 
-        expect(res.statusCode).toEqual(200)
-        expect(res.body.name).toEqual(data.name)
-        expect(res.body).toHaveProperty('createdAt')
-
-        newBrand = res.body;
-      });
-
-      it('Schema Verification - Name is a mandatory field', async () => {
-        const data = {
-          'name': '',
-          'description': 'Test Brand Description'
-        }
-        const res = await request
-          .post('/brands')
-          .send(data)
-
-        expect(res.statusCode).toEqual(422)
-        expect(res.body.error).toEqual('Name is required');
-      });
-
-      it('Schema Verification - Min char length for name > 1', async () => {
-        const data = {
-          'name': 'a',
-          'description': 'Test Brand Description'
-        }
-        const res = await request
-          .post('/brands')
-          .send(data)
-
-        expect(res.statusCode).toEqual(422)
-        expect(res.body.error).toEqual('Brand name is too short');
-      });
-
-      it('Schema Verification - Max char length for name = 30', async () => {
-        const data = {
-          'name': 'This is a really long brand name '
-        }
-
-        const res = await request
-        .post('/brands')
-        .send(data)
-
-        expect(res.statusCode).toEqual(422)
-        expect(res.body.error).toEqual('Brand name is too long');
-      });
-
-
-      it('Schema Verification - Description must be a string', async () => {
-        const data = {
-          'name': 'Sample Brand',
-          'description': 123
-        }
-
-        const res = await request
-          .post('/brands')
-          .send(data)
-
-        expect(res.statusCode).toEqual(422)
-        expect(res.body.error).toEqual('Brand description must be a string');
-      });
-      it('Business Logic - Duplicate brand entries not allowed', async () => {
-        const name = 'Test Brand ' + Math.floor(Math.random() * 100000)
-        const data = {
-          'name': name
-        }
-        // first request
-        await request
-          .post('/brands')
-          .send(data)
-
-        // second request
-        const res2 = await request
-          .post('/brands')
-          .send(data)
-
-        expect(res2.statusCode).toEqual(422)
-        expect(res2.body.error).toContain('already exists')
-      });
-    });
-
-    describe('GET /brand/:id', () => {
       it('Business Logic - GET /brand/invalid_id should throw 404', async () => {
         const res = await request.get('/brands/' + '12348f0500b2931578c0a5ac');
 
@@ -114,12 +125,12 @@ describe('Brands', () => {
       });
 
       it('GET /brand/:id', async () => {
-        const res = await request.get('/brands/' + newBrand._id);
+        const res = await request.get('/brands/' + postBrand.body._id);
         expect(res.statusCode).toEqual(200);
-        expect(res.body.name).toEqual(newBrand.name)
+        expect(res.body.name).toEqual(postBrand.body.name)
       });
     });
-  });
+  })
 
   describe('Update brands', () => {
     it('PUT /brands', async () => {
