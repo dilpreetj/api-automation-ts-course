@@ -2,7 +2,6 @@ import * as supertest from 'supertest';
 const request = supertest('https://sdetunicorns.com/api/test')
 
 describe('Brands', () => {
-  let newBrand;
 
   describe('Fetch brands', () => {
     it('GET /brands', async () => {
@@ -121,13 +120,23 @@ describe('Brands', () => {
     });
   })
 
-  describe.skip('Update brands', () => {
+  describe('Update brands', () => {
+    let postBrand;
+    const data = {
+      'name': 'Test Brand ' + Math.floor(Math.random() * 100000),
+      'description': 'Test Brand Description'
+    }
+    beforeAll(async () => {
+      postBrand = await request
+        .post('/brands')
+        .send(data)
+    })
     it('PUT /brands', async () => {
       const data = {
-        'name': newBrand.name + ' updated'
+        'name': postBrand.body.name + ' updated'
       }
       const res = await request
-        .put('/brands/' + newBrand._id)
+        .put('/brands/' + postBrand.body._id)
         .send(data)
 
       expect(res.statusCode).toEqual(200)
@@ -146,10 +155,20 @@ describe('Brands', () => {
     });
   });
 
-  describe.skip('Delete Brands', () => {
+  describe('Delete Brands', () => {
+    let postBrand;
+    const data = {
+      'name': 'Test Brand ' + Math.floor(Math.random() * 100000),
+      'description': 'Test Brand Description'
+    }
+    beforeAll(async () => {
+      postBrand = await request
+        .post('/brands')
+        .send(data)
+    })
     it('DELETE /brands', async () => {
       const res = await request
-        .delete('/brands/' + newBrand._id)
+        .delete('/brands/' + postBrand.body._id)
       expect(res.statusCode).toEqual(200)
     });
     it('DELETE /brands/invalid_id', async () => {
@@ -157,7 +176,6 @@ describe('Brands', () => {
         .delete('/brands/' + 123)
       expect(res.statusCode).toEqual(422)
       expect(res.body.error).toContain('Unable to delete brand')
-
     });
   });
 });
