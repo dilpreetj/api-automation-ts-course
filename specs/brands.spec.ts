@@ -23,6 +23,11 @@ describe('Brands', () => {
         .post('/brands')
         .send(data)
     })
+
+    afterAll(async () => {
+      await request
+        .delete('/brands/'+ postBrand.body._id)
+    })
     it('POST /brands', async () => {
       expect(postBrand.statusCode).toEqual(200)
       expect(postBrand.body.name).toEqual(data.name)
@@ -104,6 +109,10 @@ describe('Brands', () => {
           .post('/brands')
           .send(data)
       })
+      afterAll(async () => {
+        await request
+          .delete('/brands/'+ postBrand.body._id)
+      })
 
       it('Business Logic - GET /brand/invalid_id should throw 404', async () => {
         const res = await request.get('/brands/' + '12348f0500b2931578c0a5ac');
@@ -130,6 +139,10 @@ describe('Brands', () => {
       postBrand = await request
         .post('/brands')
         .send(data)
+    })
+    afterAll(async () => {
+      await request
+        .delete('/brands/'+ postBrand.body._id)
     })
     it('PUT /brands', async () => {
       const data = {
