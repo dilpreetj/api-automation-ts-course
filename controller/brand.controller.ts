@@ -10,7 +10,7 @@ class BrandController {
     return request.get('/brands/' + id)
   }
 
-  postBrands(data: { [key: string]: string }) {
+  postBrands(data: { [key: string]: string | number }) {
     return request
       .post('/brands')
       .send(data)
