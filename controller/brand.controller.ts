@@ -1,5 +1,6 @@
 import * as supertest from 'supertest';
-const request = supertest('https://sdetunicorns.com/api/test')
+import config from '../config/base.config';
+const request = supertest(config.baseUrl);
 
 class BrandController {
   getBrands() {
