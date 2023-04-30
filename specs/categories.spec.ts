@@ -9,7 +9,7 @@ describe('Categories', () => {
     expect(Object.keys(res.body[0])).toEqual(['_id', 'name'])
   });
 
-  describe('Create Categories', () => {
+  describe.only('Create Categories', () => {
     let token;
     it('Verify Login', async () => {
       const data = {"email": "mod@mail.com", "password": "pass"}
@@ -21,8 +21,9 @@ describe('Categories', () => {
       const body = { "name": "Test Category " + Math.floor(Math.random() * 10000) }
       const res = await controller
         .postCategories(body)
-
+        .set("Authorization", "Bearer " + token)
       expect(res.statusCode).toEqual(200);
+      expect(res.body.name).toEqual(body.name);
     });
   });
 });
