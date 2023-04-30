@@ -10,7 +10,7 @@ describe('Categories', () => {
     expect(Object.keys(res.body[0])).toEqual(['_id', 'name'])
   });
 
-  describe.only('Create Categories', () => {
+  describe('Create Categories', () => {
     let token;
 
     beforeAll(async () => {
