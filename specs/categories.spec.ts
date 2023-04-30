@@ -1,3 +1,4 @@
+import config from '../config/base.config';
 import adminController from '../controller/admin.controller';
 import controller from '../controller/categories.controller';
 
@@ -11,11 +12,12 @@ describe('Categories', () => {
 
   describe.only('Create Categories', () => {
     let token;
-    it('Verify Login', async () => {
-      const data = {"email": "mod@mail.com", "password": "pass"}
+
+    beforeAll(async () => {
+      const data = {"email": config.email, "password": config.password}
       const res = await adminController.postAdminLogin(data);
       token = res.body.token;
-    });
+    })
 
     it('POST /categories', async () => {
       const body = { "name": "Test Category " + Math.floor(Math.random() * 10000) }
