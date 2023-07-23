@@ -1,6 +1,6 @@
 import config from '../config/base.config';
 import controller from '../controller/categories.controller';
-import { login } from '../utils/helper';
+import { getCategoryId, login } from '../utils/helper';
 
 describe('Categories', () => {
   it('GET /categories', async () => {
@@ -28,21 +28,17 @@ describe('Categories', () => {
   });
 
   describe('Update Categories', () => {
-    let token, postRes;
+    let token, categoryId;
 
     beforeAll(async () => {
       token = await login(config.email, config.password);
-
-      const body = { "name": "Test Category " + Math.floor(Math.random() * 10000) }
-      postRes = await controller
-        .postCategories(body)
-        .set("Authorization", "Bearer " + token)
+      categoryId = await getCategoryId(token);
     })
 
     it('PUT /categories/id', async () => {
       const body = { "name": "Test Category Updated " + Math.floor(Math.random() * 10000) }
       const res = await controller
-        .putCategories(postRes.body._id, body)
+        .putCategories(categoryId, body)
         .set("Authorization", "Bearer " + token)
       expect(res.statusCode).toBe(200);
       expect(res.body.name).toBe(body.name);
@@ -53,12 +49,7 @@ describe('Categories', () => {
     let token, categoryId;
     beforeAll(async () => {
       token = await login(config.email, config.password);
-
-      const postBody = {"name": "Test Category " + Math.floor(Math.random() * 10000)}
-      const postRes = await controller
-        .postCategories(postBody)
-        .set('Authorization', 'Bearer ' + token);
-      categoryId = postRes.body._id;
+      categoryId = await getCategoryId(token);
     });
 
     it('DELETE /categories', async () => {
