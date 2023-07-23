@@ -1,6 +1,6 @@
 import config from '../config/base.config';
-import adminController from '../controller/admin.controller';
 import controller from '../controller/categories.controller';
+import { login } from '../utils/helper';
 
 describe('Categories', () => {
   it('GET /categories', async () => {
@@ -14,9 +14,7 @@ describe('Categories', () => {
     let token;
 
     beforeAll(async () => {
-      const data = {"email": config.email, "password": config.password}
-      const res = await adminController.postAdminLogin(data);
-      token = res.body.token;
+      token = await login(config.email, config.password);
     })
 
     it('POST /categories', async () => {
@@ -33,9 +31,7 @@ describe('Categories', () => {
     let token, postRes;
 
     beforeAll(async () => {
-      const data = {"email": config.email, "password": config.password}
-      const res = await adminController.postAdminLogin(data);
-      token = res.body.token;
+      token = await login(config.email, config.password);
 
       const body = { "name": "Test Category " + Math.floor(Math.random() * 10000) }
       postRes = await controller
@@ -56,9 +52,7 @@ describe('Categories', () => {
   describe('Delete Categories', () => {
     let token, categoryId;
     beforeAll(async () => {
-      const body = {"email": config.email, "password": config.password}
-      const res = await adminController.postAdminLogin(body)
-      token = res.body.token;
+      token = await login(config.email, config.password);
 
       const postBody = {"name": "Test Category " + Math.floor(Math.random() * 10000)}
       const postRes = await controller
