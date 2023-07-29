@@ -8,6 +8,11 @@ module.exports = {
       {
         outputDirectory: 'reports'
       }
+    ],
+    ['jest-html-reporters',
+      {
+        publicPath: 'reports'
+      }
     ]
   ]
 };
