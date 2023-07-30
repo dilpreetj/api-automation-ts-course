@@ -40,7 +40,7 @@ describe('Categories', () => {
       const res = await controller
         .putCategories(categoryId, body)
         .set("Authorization", "Bearer " + token)
-      expect(res.statusCode).toBe(400);
+      expect(res.statusCode).toBe(200);
       expect(res.body.name).toBe(body.name);
     });
   });
